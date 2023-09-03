@@ -1,0 +1,39 @@
+{% extends 'layout.html' %} {% block content %}
+<div class="timeline">
+  <div class="followings half">
+    <h2>팔로잉 목록</h2>
+    {% if user.Followings %} {% for following in user.Followings %}
+    <div>
+      {{following.nick}}
+      <button class="unfollow-button" data-user-id="{{ following.id }}">
+        팔로잉 취소
+      </button>
+    </div>
+    {% endfor %} {% endif %}
+  </div>
+  <div class="followers half">
+    <h2>팔로워 목록</h2>
+    {% if user.Followers %} {% for follower in user.Followers %}
+    <div>{{follower.nick}}</div>
+    {% endfor %} {% endif %}
+  </div>
+</div>
+{% endblock %} {% block script %}
+<script>
+  document.querySelectorAll(".unfollow-button").forEach(function (button) {
+    button.addEventListener("click", function () {
+      const userId = button.dataset.userId;
+      if (confirm("팔로잉 취소하시겠습니까?")) {
+        axios
+          .post(`/user/${userId}/unfollow`)
+          .then(() => {
+            location.reload();
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      }
+    });
+  });
+</script>
+{% endblock %}
